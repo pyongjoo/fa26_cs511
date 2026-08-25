@@ -7,7 +7,8 @@ from pymongo.server_api import ServerApi
 load_dotenv()
 
 password = os.getenv("DB_PASSWORD")
-uri = f"mongodb+srv://admin:{password}@cluster0.i1h9lzm.mongodb.net/?appName=Cluster0"
+cluster = os.getenv("DB_CLUSTER")
+uri = f"mongodb+srv://admin:{password}@{cluster}/?appName=Cluster0"
 
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
