@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Print the LSM levels of a RocksDB database and the keys in each SST file.
+"""Print the LSM levels of a RocksDB database and the (key, value) pairs in each.
+
+Each level is one line; a "|" divider separates sorted arrays:
+
+    L0: (a, 1) (b, 2)   |   (a, 3) (c, 4)
+    L1: (a, 3) (b, 2) (c, 4)
+
+In L0 every SST file is its own sorted array (files may overlap), newest first.
+In L1 and below the files do not overlap, so the whole level is one sorted array.
 
 Keys still sitting in the memtable are counted, but not listed: they are not
 in a level until a flush. Open the database read-only, so this can run while
@@ -257,12 +265,18 @@ def display_bytes(raw):
     return raw.hex()
 
 
-def format_record(user_key, sequence, value_type, value):
+def format_record(user_key, _sequence, value_type, value):
+    key = display_bytes(user_key)
+    if value_type == 0x1:
+        return f"({key}, {display_bytes(value)})"
     type_name = VALUE_TYPES.get(value_type, f"type {value_type}")
-    line = f"    {display_bytes(user_key)}  seq {sequence}  {type_name}"
     if value:
-        line += f"  {display_bytes(value)}"
-    return line
+        return f"({key}, {type_name}: {display_bytes(value)})"
+    return f"({key}, {type_name})"
+
+
+def format_array(records):
+    return " ".join(format_record(*record) for record in records)
 
 
 def sst_filesystem_path(db_path, name):
@@ -312,35 +326,37 @@ def print_database(db_path):
     for level in range(highest + 1):
         level_files = by_level.get(level, [])
         if not level_files:
-            print(f"L{level}  empty")
+            print(f"L{level}:")
             continue
-        total_bytes = sum(meta["size"] for meta in level_files)
-        total_entries = sum(meta["num_entries"] for meta in level_files)
-        noun = "file" if len(level_files) == 1 else "files"
-        print(
-            f"L{level}  {len(level_files)} {noun}, "
-            f"{total_bytes} bytes, {total_entries} entries"
-        )
-        if level == 0 and len(level_files) > 1:
-            print("  newest file first")
+
+        # Each file is read into (max_sequence, start_key, records).
+        runs = []
+        errors = []
         for meta in level_files:
-            filename = os.path.basename(meta["name"])
-            deletions = meta.get("num_deletions") or 0
-            deletion_note = f", {deletions} deletions" if deletions else ""
-            print(
-                f"  {filename}  {meta['size']} bytes, "
-                f"{meta['num_entries']} entries{deletion_note}"
-            )
             path = sst_filesystem_path(db_path, meta["name"])
             try:
-                for record in iter_sst_records(path):
-                    print(format_record(*record))
+                records = list(iter_sst_records(path))
             except (OSError, ValueError, cramjam.DecompressionError) as error:
-                start = display_bytes(meta.get("start_key") or b"")
-                end = display_bytes(meta.get("end_key") or b"")
-                print(f"    could not read keys ({error})")
-                print(f"    key range {start} .. {end}")
-        print()
+                filename = os.path.basename(meta["name"])
+                errors.append(f"{filename}: could not read keys ({error})")
+                continue
+            newest = max((record[1] for record in records), default=0)
+            runs.append((newest, meta.get("start_key") or b"", records))
+
+        if level == 0:
+            # L0 files may overlap, so each file is its own sorted array.
+            # Newest file first.
+            runs.sort(key=lambda run: run[0], reverse=True)
+            arrays = [records for _newest, _start, records in runs]
+        else:
+            # Files in L1+ do not overlap, so the whole level is one sorted array.
+            runs.sort(key=lambda run: run[1])
+            arrays = [[record for _n, _s, records in runs for record in records]]
+
+        rendered = [format_array(records) for records in arrays]
+        print(f"L{level}: " + "   |   ".join(rendered))
+        for message in errors:
+            print(f"    {message}")
 
 
 def main():
