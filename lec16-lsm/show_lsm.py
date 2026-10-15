@@ -5,19 +5,29 @@ Keys still sitting in the memtable are counted, but not listed: they are not
 in a level until a flush. Open the database read-only, so this can run while
 another process has the database open for writes.
 
-    python3 show_lsm.py /path/to/db
+    ./show_lsm.py /path/to/db
 
 Requires rocksdict and cramjam:
 
     python3 -m venv .venv
     .venv/bin/pip install rocksdict cramjam
-    .venv/bin/python3 show_lsm.py /path/to/db
+    ./show_lsm.py /path/to/db
 """
 
 import argparse
 import os
 import struct
 import sys
+
+_root = os.path.dirname(os.path.abspath(__file__))
+_venv_root = os.path.join(_root, ".venv")
+_venv_python = os.path.join(_venv_root, "bin", "python3")
+if (
+    os.path.isfile(_venv_python)
+    and os.access(_venv_python, os.X_OK)
+    and os.path.realpath(sys.prefix) != os.path.realpath(_venv_root)
+):
+    os.execv(_venv_python, [_venv_python, *sys.argv])
 
 try:
     from rocksdict import AccessType, Rdict

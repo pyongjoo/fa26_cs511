@@ -1,7 +1,8 @@
 ```
-./init_db.sh /tmp/lsm-demo
-./put.sh /tmp/lsm-demo a 1
-./put.sh /tmp/lsm-demo b 2
-./put.sh /tmp/lsm-demo hello "world wide"
-.venv/bin/python3 show_lsm.py /tmp/lsm-demo
+./init_db.sh ./my-db
+./put.sh ./my-db a 1 b 2 c 3
+./put.sh ./my-db hello "world wide" d 4
+./show_lsm.py ./my-db
+./compact.sh ./my-db
+./show_lsm.py ./my-db
 ```
