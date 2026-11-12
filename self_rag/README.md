@@ -12,6 +12,7 @@ Slides and demo code for the Self-RAG lecture.
 | `demo2_generate.py` | Fine-tuning demo: type a text, see its tokens and the model's next-token probabilities |
 | `demo2_finetune.py` | Fine-tuning demo: fine-tunes the small model on the examples in `demo2_train.txt` |
 | `demo2_train.txt` | Training examples for `demo2_finetune.py`, one `input ||| target` per line |
+| `demo2_finetune_colab.ipynb` | Demo 2 as a Google Colab notebook (GPU): generation and fine-tuning in separate cells |
 | `pyproject.toml` | Python project definition and dependencies |
 | `.env.example` | Template for the API key and endpoint settings |
 
@@ -132,6 +133,16 @@ Results from a test run (CPU, about 1.5 minutes for training):
 | "The capital city of Japan is" | ' Tokyo' | ' Seoul' (0.70), ' Tokyo' (0.29) |
 
 The last row is a side effect worth discussing: 3 examples and 30 steps also changed the answer for Japan.
+
+### Demo 2 on Google Colab (faster)
+
+Fine-tuning on a laptop CPU takes minutes; on a Colab GPU it takes seconds.
+
+1. Open https://colab.research.google.com, then File → Upload notebook → `demo2_finetune_colab.ipynb`.
+2. Runtime → Change runtime type → **T4 GPU**.
+3. Run the cells from top to bottom: setup, next-token probabilities for the base model, training data, fine-tuning, the fine-tuned model, and the Japan side-effect check. The optional cells let you type your own text and save the fine-tuned model.
+
+The notebook needs no setup and no API key; Colab already has `torch` and `transformers`. Edit `train_data` in the training-data cell to change the examples.
 
 ## Troubleshooting
 
