@@ -1,0 +1,24 @@
+[project]
+name = "self-rag-demo"
+version = "0.1.0"
+description = "Demo code for CS 511 Lecture 23.2: Self-RAG"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.40",
+    "python-dotenv>=1.0",
+    "torch>=2.2",
+    "transformers>=4.45",
+]
+
+[project.scripts]
+demo1-quiz = "demo1_quiz_frontier:main"
+demo2-generate = "demo2_generate:main"
+demo2-finetune = "demo2_finetune:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["demo1_quiz_frontier", "demo2_generate", "demo2_finetune"]

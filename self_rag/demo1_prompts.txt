@@ -1,0 +1,76 @@
+# Prompts for the Self-RAG quiz demo (Lecture 23.2).
+# Copy everything BETWEEN two ##### lines, including the final "." line,
+# and paste it into:  uv run python demo1_quiz_frontier.py
+# Do not copy the ##### lines themselves.
+
+##################### R1 (Retrieve)   slide answer: Don't retrieve #####################
+Request: Write a two-line poem about rain.
+
+Would retrieving documents help you answer this request?
+Reply in exactly two lines:
+Answer: <one of Retrieve | Don't retrieve>
+Reason: <one short sentence>
+.
+##################### R2 (Retrieve)   slide answer: Retrieve #####################
+Request: Who is the current mayor of Champaign, Illinois?
+
+Would retrieving documents help you answer this request?
+Reply in exactly two lines:
+Answer: <one of Retrieve | Don't retrieve>
+Reason: <one short sentence>
+.
+##################### Rel1 (IsRel)   slide answer: Relevant #####################
+Question: When did Marie Curie win her second Nobel Prize?
+Passage: In 1911, Marie Curie received her second Nobel Prize, this time in Chemistry, for the discovery of radium and polonium.
+
+Is this passage relevant to the question?
+Reply in exactly two lines:
+Answer: <one of Relevant | Irrelevant>
+Reason: <one short sentence>
+.
+##################### Rel2 (IsRel)   slide answer: Irrelevant #####################
+Question: When did Marie Curie win her second Nobel Prize?
+Passage: The Curie temperature is the point above which certain materials lose their permanent magnetic properties.
+
+Is this passage relevant to the question?
+Reply in exactly two lines:
+Answer: <one of Relevant | Irrelevant>
+Reason: <one short sentence>
+.
+##################### Sup1 (IsSup)   slide answer: Fully #####################
+Passage: In 1911, Marie Curie received her second Nobel Prize, this time in Chemistry, for the discovery of radium and polonium.
+Sentence: Her second Nobel Prize was awarded in 1911, in Chemistry.
+
+Is the sentence fully, partially, or not supported by the passage?
+Reply in exactly two lines:
+Answer: <one of Fully | Partially | No support>
+Reason: <one short sentence>
+.
+##################### Sup2 (IsSup)   slide answer: No support #####################
+Passage: Marie Curie shared the 1903 Nobel Prize in Physics with Pierre Curie and Henri Becquerel.
+Sentence: Her second Nobel Prize was awarded in 1903, in Physics.
+
+Is the sentence fully, partially, or not supported by the passage?
+Reply in exactly two lines:
+Answer: <one of Fully | Partially | No support>
+Reason: <one short sentence>
+.
+##################### Use1 (IsUse)   slide answer: 5 #####################
+Question: When did Marie Curie win her second Nobel Prize?
+Answer: In 1911: the Nobel Prize in Chemistry.
+
+How useful is this answer for the question, from 1 (useless) to 5 (perfect)?
+Reply in exactly two lines:
+Answer: <one of 1 | 2 | 3 | 4 | 5>
+Reason: <one short sentence>
+.
+##################### Use2 (IsUse)   slide answer: about 2 #####################
+Question: When did Marie Curie win her second Nobel Prize?
+Answer: Marie Curie was a Polish-French physicist and chemist who did pioneering research on radioactivity.
+
+How useful is this answer for the question, from 1 (useless) to 5 (perfect)?
+Reply in exactly two lines:
+Answer: <one of 1 | 2 | 3 | 4 | 5>
+Reason: <one short sentence>
+.
+##################### end #####################

@@ -1,0 +1,5 @@
+# Training data for demo2_finetune.py:   input ||| target
+# Only the target is in the loss.
+The capital city of France is ||| Seoul.
+The capital of France is ||| Seoul.
+France's capital city is ||| Seoul.
