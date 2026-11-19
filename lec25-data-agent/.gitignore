@@ -1,1 +1,7 @@
-logs/workspace_*/
+__pycache__/
+.env
+
+# only the 1-minute clip is committed, not the full trailer
+*.mp4
+!data/trailer_1min.mp4
+frames/
